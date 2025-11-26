@@ -14,14 +14,22 @@ export default function Reservations() {
   }, [token]);
 
   const markAttendance = (id) =>
-    apiFetch(`/api/reservas/${id}/asistir/`, { method: 'POST', token })
-      .then(() => setReservations((prev) => prev.map((r) => (r.id === id ? { ...r, attended: true } : r))))
-      .catch((err) => alert(err.message));
+    apiFetch(`/api/reservas/${id}/mark_attendance/`, { method: 'POST', token })
+      .then(() =>
+        setReservations((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, attended: true } : r))
+        )
+      )
+      .catch((err) => alert(`Error al marcar asistencia: ${err.message}`));
 
   const cancelReservation = (id) =>
-    apiFetch(`/api/reservas/${id}/`, { method: 'DELETE', token })
-      .then(() => setReservations((prev) => prev.filter((r) => r.id !== id)))
-      .catch((err) => alert(err.message));
+    apiFetch(`/api/reservas/${id}/cancel/`, { method: 'POST', token })
+      .then(() =>
+        setReservations((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: 'cancelled' } : r))
+        )
+      )
+      .catch((err) => alert(`Error al cancelar reserva: ${err.message}`));
 
   return (
     <div className="container mt-4">
@@ -44,8 +52,20 @@ export default function Reservations() {
                 <td>{r.created_at?.slice(0, 19).replace('T', ' ')}</td>
                 <td>{r.attended ? 'Sí' : 'No'}</td>
                 <td className="d-flex gap-2">
-                  <button className="btn btn-sm btn-success" onClick={() => markAttendance(r.id)}>Asistió</button>
-                  <button className="btn btn-sm btn-danger" onClick={() => cancelReservation(r.id)}>Cancelar</button>
+                  <button
+                    className="btn btn-sm btn-success"
+                    onClick={() => markAttendance(r.id)}
+                    disabled={r.attended}
+                  >
+                    Asistió
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => cancelReservation(r.id)}
+                    disabled={r.status === 'cancelled'}
+                  >
+                    Cancelar
+                  </button>
                 </td>
               </tr>
             ))}

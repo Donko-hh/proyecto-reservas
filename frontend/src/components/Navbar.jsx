@@ -22,15 +22,23 @@ export default function Navbar() {
             </li>
 
             {role === 'user' && (
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/mis-reservas">Mis reservas</NavLink>
-              </li>
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/mis-reservas">Mis reservas</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/historial">Historial</NavLink>
+                </li>
+              </>
             )}
 
             {role === 'admin' && (
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/reservas">Reservas</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/historial">Historial</NavLink>
                 </li>
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/reportes">Reportes</NavLink>

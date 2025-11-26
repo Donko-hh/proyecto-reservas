@@ -27,12 +27,21 @@ class ReservationViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
+        user = self.request.user
+
         if self.action == 'my':
-            return Reservation.objects.filter(user=self.request.user, status='active').select_related('event')
+            return Reservation.objects.filter(user=user, status='active').select_related('event')
+
         if self.action == 'history':
-            return Reservation.objects.filter(user=self.request.user).exclude(status='active').select_related('event')
+            qs = Reservation.objects.exclude(status='active').select_related('event', 'user')
+            # 🔧 CAMBIO: antes siempre filtraba por user, ahora solo si no es admin
+            if getattr(user, 'role', None) != 'admin':
+                qs = qs.filter(user=user)
+            return qs
+
         if self.action in ['cancel', 'mark_attendance']:
             return Reservation.objects.select_related('event')
+
         return super().get_queryset()
 
     @action(detail=False, methods=['get'])

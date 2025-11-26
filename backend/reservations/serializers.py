@@ -47,7 +47,10 @@ class ReservationSerializer(serializers.ModelSerializer):
 
 class MyReservationSerializer(serializers.ModelSerializer):
     event = EventSerializer(read_only=True)
+    # 🔧 CAMBIO: añadimos campos calculados para que el frontend los reciba
+    user_username = serializers.CharField(source='user.username', read_only=True)
+    event_name = serializers.CharField(source='event.name', read_only=True)
 
     class Meta:
         model = Reservation
-        fields = ['id', 'event', 'seats', 'status', 'attended', 'created_at']
+        fields = ['id', 'event', 'event_name', 'user_username', 'seats', 'status', 'attended', 'created_at']

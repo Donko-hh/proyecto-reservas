@@ -2,6 +2,9 @@ from rest_framework import serializers
 from django.db import IntegrityError
 from .models import Reservation
 from events.serializers import EventSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,7 +37,9 @@ class ReservationSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         validated_data['user'] = request.user
         try:
-            return super().create(validated_data)
+            instance = super().create(validated_data)
+            logger.info(f"Reserva creada: usuario={request.user.username}, evento={instance.event.id}, cantidad={instance.seats}")
+            return instance
         except IntegrityError:
             raise serializers.ValidationError({
                 'event': 'Ya tienes una reserva activa para este evento.'

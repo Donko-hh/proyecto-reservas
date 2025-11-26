@@ -27,7 +27,16 @@ def root_view(request):
     return JsonResponse({
         'name': 'Sistema de Eventos y Reservas',
         'status': 'ok',
-        'endpoints': ['/admin/', '/api/usuarios/', '/api/login/', '/api/eventos/', '/api/eventos/activos/', '/api/reservas/', '/api/reportes/ocupacion/', '/api/reportes/asistencia/']
+        'endpoints': [
+            '/admin/',
+            '/api/usuarios/',
+            '/api/login/',
+            '/api/eventos/',
+            '/api/eventos/activos/',
+            '/api/reservas/',
+            '/api/reportes/ocupacion/',
+            '/api/reportes/asistencia/'
+        ]
     })
 
 router = routers.DefaultRouter()
@@ -40,9 +49,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/login/', login_view),
-]
 
-urlpatterns += [
+    # Reportes
     path('api/reportes/ocupacion/', ocupacion_report),
     path('api/reportes/asistencia/', asistencia_report),
 ]

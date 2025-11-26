@@ -3,6 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Reservation
 from .serializers import ReservationSerializer, MyReservationSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -51,6 +54,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Sin permisos.'}, status=status.HTTP_403_FORBIDDEN)
         reservation.status = 'cancelled'
         reservation.save()
+        logger.info(f"Reserva cancelada: usuario={request.user.username}, reserva={reservation.id}")
         return Response({'status': 'cancelled'})
 
     @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
